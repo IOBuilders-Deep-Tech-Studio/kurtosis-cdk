@@ -58,22 +58,74 @@ cp /opt/contract-deploy/deploy_parameters.json /opt/zkevm-contracts/deployment/v
 cp /opt/contract-deploy/create_rollup_parameters.json /opt/zkevm-contracts/deployment/v2/create_rollup_parameters.json
 sed -i 's#http://127.0.0.1:8545#{{.l1_rpc_url}}#' hardhat.config.ts
 
-# Deploy gas token.
-# shellcheck disable=SC1054,SC1083
-{{if .zkevm_use_gas_token_contract}}
-echo_ts "Deploying gas token to L1"
-printf "[profile.default]\nsrc = 'contracts'\nout = 'out'\nlibs = ['node_modules']\n" > foundry.toml
-forge create \
-    --json \
-    --rpc-url "{{.l1_rpc_url}}" \
-    --mnemonic "{{.l1_preallocated_mnemonic}}" \
-    contracts/mocks/ERC20PermitMock.sol:ERC20PermitMock \
-    --constructor-args  "CDK Gas Token" "CDK" "{{.zkevm_l2_admin_address}}" "1000000000000000000000000" > gasToken-erc20.json
+# This if-else block checks if the user wants to deploy a new ERC20 or use an existing one
+zkevm_use_gas_token_contract="{{.zkevm_use_gas_token_contract}}"
+zkevm_gas_token_address="{{.zkevm_gas_token_address}}"
 
-# In this case, we'll configure the create rollup parameters to have a gas token
-jq --slurpfile c gasToken-erc20.json '.gasTokenAddress = $c[0].deployedTo' /opt/contract-deploy/create_rollup_parameters.json > /opt/zkevm-contracts/deployment/v2/create_rollup_parameters.json
-# shellcheck disable=SC1056,SC1072,SC1073,SC1009
-{{end}}
+# Start of the gas token deployment process
+echo_ts "Starting the gas token deployment script"
+
+# Check if the gas token contract should be used
+if [[ "$zkevm_use_gas_token_contract" == "true" ]]; then
+    echo_ts "Using the gas token contract is enabled."
+
+    if [[ -n "$zkevm_gas_token_address" ]]; then
+        echo_ts "A gas token address is provided: $zkevm_gas_token_address"
+
+        # Use the provided gas token address
+        jq --arg gasTokenAddress "$zkevm_gas_token_address" '.gasTokenAddress = $gasTokenAddress' /opt/contract-deploy/create_rollup_parameters.json > /opt/zkevm-contracts/deployment/v2/create_rollup_parameters.json
+
+        if [[ $? -ne 0 ]]; then
+            echo_ts "Error: Failed to update create_rollup_parameters.json with the provided address."
+            exit 1
+        fi
+
+        echo_ts "create_rollup_parameters.json updated with the provided gas token address."
+    else
+        echo_ts "No gas token address provided. Deploying gas token on L1."
+
+        # Create the Foundry configuration file
+        echo_ts "Creating the foundry.toml file"
+        printf "[profile.default]\nsrc = 'contracts'\nout = 'out'\nlibs = ['node_modules']\n" > foundry.toml
+
+        # Deploy the contract using Forge
+        echo_ts "Deploying the ERC20PermitMock contract"
+        forge create \
+            --json \
+            --rpc-url "{{.l1_rpc_url}}" \
+            --mnemonic "{{.l1_preallocated_mnemonic}}" \
+            contracts/mocks/ERC20PermitMock.sol:ERC20PermitMock \
+            --constructor-args "CDK Gas Token" "CDK" "{{.zkevm_l2_admin_address}}" "1000000000000000000000000" > gasToken-erc20.json
+
+        # Check if the deployment was successful
+        if [[ $? -ne 0 ]]; then
+            echo_ts "Error: Deployment of the ERC20PermitMock contract failed."
+            exit 1
+        fi
+
+        echo_ts "Deployment of the ERC20PermitMock contract completed. Output file: gasToken-erc20.json"
+
+        # Read the address of the deployed contract
+        gasTokenAddress=$(jq -r '.deployedTo' gasToken-erc20.json)
+        echo_ts "Deployed gas token address: $gasTokenAddress"
+
+        # Update the rollup creation parameters with the new gas token address
+        echo_ts "Updating create_rollup_parameters.json with the gas token address"
+        jq --arg gasTokenAddress "$gasTokenAddress" '.gasTokenAddress = $gasTokenAddress' /opt/contract-deploy/create_rollup_parameters.json > /opt/zkevm-contracts/deployment/v2/create_rollup_parameters.json
+
+        if [[ $? -ne 0 ]]; then
+            echo_ts "Error: Failed to update create_rollup_parameters.json"
+            exit 1
+        fi
+
+        echo_ts "create_rollup_parameters.json updated successfully."
+    fi
+else
+    echo_ts "Using the gas token contract is not enabled. No further action is required."
+fi
+
+
+echo_ts "End of the gas token deployment script"
 
 # Deploy contracts.
 echo_ts "Deploying zkevm contracts to L1"

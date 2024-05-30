@@ -3,7 +3,7 @@
 # The deployment process is divided into various stages.
 
 # Deploy local L1.
-deploy_l1: true
+deploy_l1: false
 
 # Deploy zkevm contracts on L1 (and also fund accounts).
 deploy_zkevm_contracts_on_l1: true
@@ -74,43 +74,45 @@ args:
 
   # Addresses and private keys of the different components.
   # They have been generated using the following command:
-  # polycli wallet inspect --mnemonic 'lab code glass agree maid neutral vessel horror deny frequent favorite soft gate galaxy proof vintage once figure diary virtual scissors marble shrug drop' --addresses 9 | tee keys.txt | jq -r '.Addresses[] | [.ETHAddress, .HexPrivateKey] | @tsv' | awk 'BEGIN{split("sequencer,aggregator,claimtxmanager,timelock,admin,loadtest,agglayer,dac,proofsigner",roles,",")} {print "zkevm_l2_" roles[NR] "_address: \"" $1 "\""; print "zkevm_l2_" roles[NR] "_private_key: \"0x" $2 "\"\n"}'
-  zkevm_l2_sequencer_address: "0x5b06837A43bdC3dD9F114558DAf4B26ed49842Ed"
-  zkevm_l2_sequencer_private_key: "0x183c492d0ba156041a7f31a1b188958a7a22eebadca741a7fe64436092dc3181"
+  # polycli wallet inspect --mnemonic 'decorate ozone opera term scale increase avoid jeans taxi group prefer nature giggle useless cloud shoulder oak half large click puppy entire noise arctic' --addresses 9 | tee keys.txt | jq -r '.Addresses[] | [.ETHAddress, .HexPrivateKey] | @tsv' | awk 'BEGIN{split("sequencer,aggregator,claimtxmanager,timelock,admin,loadtest,agglayer,dac,proofsigner",roles,",")} {print "zkevm_l2_" roles[NR] "_address: \"" $1 "\""; print "zkevm_l2_" roles[NR] "_private_key: \"0x" $2 "\"\n"}'
+  zkevm_l2_sequencer_address: "0xaF2A3fE1160D948765e6c454d9c62eBe2b3f6747"
+  zkevm_l2_sequencer_private_key: "0x64e065ec86c36b47346e929955f75cd1008e90ff49b4880a39f92d779df81626"
 
-  zkevm_l2_aggregator_address: "0xCae5b68Ff783594bDe1b93cdE627c741722c4D4d"
-  zkevm_l2_aggregator_private_key: "0x2857ca0e7748448f3a50469f7ffe55cde7299d5696aedd72cfe18a06fb856970"
+  zkevm_l2_aggregator_address: "0xb42AA23ab7131aaF3F807c9fF0bf7CEB19baE41b"
+  zkevm_l2_aggregator_private_key: "0xb048c9286d2cfe8e3afb045f9168513972b64a5ba35778db69eda7c30a47c40d"
 
-  zkevm_l2_claimtxmanager_address: "0x5f5dB0D4D58310F53713eF4Df80ba6717868A9f8"
-  zkevm_l2_claimtxmanager_private_key: "0x8d5c9ecd4ba2a195db3777c8412f8e3370ae9adffac222a54a84e116c7f8b934"
+  zkevm_l2_claimtxmanager_address: "0x823DE8c82E1f9b7eA32ba8eD2788bF341f2C1E6F"
+  zkevm_l2_claimtxmanager_private_key: "0x48b97e4d6c649a98a5a874b8a6ffe222b778044020e1e21ffea2bebd522bc029"
 
-  zkevm_l2_timelock_address: "0x130aA39Aa80407BD251c3d274d161ca302c52B7A"
-  zkevm_l2_timelock_private_key: "0x80051baf5a0a749296b9dcdb4a38a264d2eea6d43edcf012d20b5560708cf45f"
+  zkevm_l2_timelock_address: "0x6C2a82120Cfb32237b8e066DbaC852A6AB2200a5"
+  zkevm_l2_timelock_private_key: "0xfccbd6a3a4684ae6fff330078cc66fba93c0e7b043a6d7ba82e05dda3a843e4f"
 
-  zkevm_l2_admin_address: "0xE34aaF64b29273B7D567FCFc40544c014EEe9970"
-  zkevm_l2_admin_private_key: "0x12d7de8621a77640c9241b2595ba78ce443d05e94090365ab3bb5e19df82c625"
+  zkevm_l2_admin_address: "0x1A94eEC634e06F5bfA8f0CF2d17fB913F65F1D95"
+  zkevm_l2_admin_private_key: "0x87c4add62c057f882f370b9130a0ff903ff5d5fdbcd82f6dc926292f754de879"
 
-  zkevm_l2_loadtest_address: "0x81457240ff5b49CaF176885ED07e3E7BFbE9Fb81"
-  zkevm_l2_loadtest_private_key: "0xd7df6d64c569ffdfe7c56e6b34e7a2bdc7b7583db74512a9ffe26fe07faaa5de"
+  zkevm_l2_loadtest_address: "0xC2EAA2eFd31cf5E7c7352F4b9867D73CB81Eb373"
+  zkevm_l2_loadtest_private_key: "0xa022056fa26e236b0d6966b7f4ebfbe4e05a266738e2dc6b0cdcaae75aa3751c"
 
-  zkevm_l2_agglayer_address: "0x351e560852ee001d5D19b5912a269F849f59479a"
-  zkevm_l2_agglayer_private_key: "0x1d45f90c0a9814d8b8af968fa0677dab2a8ff0266f33b136e560fe420858a419"
+  zkevm_l2_agglayer_address: "0x7687FF546751DD3BE96049A1CB86681d83CE3898"
+  zkevm_l2_agglayer_private_key: "0x181202fc72043dd29359f51f3c18873f164de823ec6dc9c98d29cd5deb6640d5"
 
-  zkevm_l2_dac_address: "0x5951F5b2604c9B42E478d5e2B2437F44073eF9A6"
-  zkevm_l2_dac_private_key: "0x85d836ee6ea6f48bae27b31535e6fc2eefe056f2276b9353aafb294277d8159b"
+  zkevm_l2_dac_address: "0x84133c7EFF447868BF4A34f625fd544CfA16C780"
+  zkevm_l2_dac_private_key: "0xae7019a56d40b399248e3c3703e84b58d4e04bfc68eb4345578e5ef654dcfd21"
 
-  zkevm_l2_proofsigner_address: "0x7569cc70950726784c8D3bB256F48e43259Cb445"
-  zkevm_l2_proofsigner_private_key: "0x77254a70a02223acebf84b6ed8afddff9d3203e31ad219b2bf900f4780cf9b51"
+  zkevm_l2_proofsigner_address: "0x847Dc261bB4602B9d5C9CC4AB6b2E73Dc60E24C3"
+  zkevm_l2_proofsigner_private_key: "0x162660003c91a826af0df7692536cc77cf49d2383a6da28f3bc38bd681b37ef6"
+
+  zkevm_l1_gas_token_address: "0x908cc9eda3f8360a35fbb1f6c82a5d4a3b80ebf3"
 
   # Keystore password.
   zkevm_l2_keystore_password: pSnv6Dh5s9ahuzGzH9RoCDrKAMddaX3m
 
   ## L1 configuration.
-  l1_chain_id: 271828
-  l1_preallocated_mnemonic: code code code code code code code code code code code quality
-  l1_funding_amount: 100ether
-  l1_rpc_url: http://el-1-geth-lighthouse:8545
-  l1_ws_url: ws://el-1-geth-lighthouse:8546
+  l1_chain_id: 11155111
+  l1_preallocated_mnemonic: cattle kind cross doctor gain pipe essay puppy one drop girl sibling
+  l1_funding_amount: 0.3ether
+  l1_rpc_url: https://eth-sepolia.g.alchemy.com/v2/vq49FcC8MH2H3NpjBawlmf1nNQRg4sor
+  l1_ws_url: wss://eth-sepolia.g.alchemy.com/v2/vq49FcC8MH2H3NpjBawlmf1nNQRg4sor
   # https://github.com/kurtosis-tech/ethereum-package/tree/main?tab=readme-ov-file#configuration
   l1_additional_services: [
     # blockscout, # block explorer
